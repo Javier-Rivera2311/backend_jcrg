@@ -7,28 +7,38 @@ const createConnection = async ( ) => {
     return await mysql2.createConnection(connectionConfig);
 }
 
-const getUsuarios = async ( req, res ) => {
+const getUsuarios = async (req, res) => {
   try {
-      
-      const connection = await createConnection();
-      const [rows] = await connection.execute('SELECT * FROM Workers');
-      await connection.end();
+    const connection = await createConnection();
 
-      return res.status(200).json({
-          success: true,
-          usuarios: rows
-      });
+    const [rows] = await connection.execute(`
+      SELECT 
+        w.*, 
+        d.name_dep AS department_name 
+      FROM 
+        Workers w
+      LEFT JOIN 
+        Department d ON w.department_id = d.ID
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      usuarios: rows
+    });
 
   } catch (error) {
-      return res.status(500).json({
-          status: false,
-          error: "Problemas al traer los usuarios",
-          code: error
-      });
+    return res.status(500).json({
+      status: false,
+      error: "Problemas al traer los usuarios",
+      code: error
+    });
   }
 };
 
-const getTests = async ( req, res ) => {
+
+const getContacts = async ( req, res ) => {
   try {
       
       const connection = await createConnection();
@@ -244,5 +254,5 @@ export {
     setUsuario,
     updateUser,
     changePassword,
-    getTests,
+    getContacts,
 }
