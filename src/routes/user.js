@@ -24,12 +24,12 @@ router.route('/updateUser')
 router.route('/Contacts')
     .get(getContacts);
 
-router.route('/updateContact')
+router.route('/updateContact/:id')
     .put(updateContact);
 
 router.route('/addContact')
     .post(addContact);
-    
+
 router.route('/deleteContact')
     .delete(deleteContact);
 
