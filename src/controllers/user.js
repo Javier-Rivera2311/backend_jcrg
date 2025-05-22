@@ -39,8 +39,10 @@ const getUsuarios = async (req, res) => {
 
 
 const addContact = async (req, res) => {
-  const { name, email, phone, commune, job, project } = req.body;
-
+  const { Name, email, Phone, Commune, job, project } = req.body;
+  const name = Name;
+  const phone = Phone;
+  const commune = Commune;
   if (!name || !email || !phone) {
     return res.status(400).json({
       success: false,
@@ -51,7 +53,7 @@ const addContact = async (req, res) => {
   try {
     const connection = await createConnection();
     const [result] = await connection.execute(
-      `INSERT INTO Contacts (name, email, phone, commune, job, project) VALUES (?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO Contacts (Name, email, Phone, Commune, job, project) VALUES (?, ?, ?, ?, ?, ?)`,
       [name, email, phone, commune, job, project]
     );
     await connection.end();
@@ -70,7 +72,6 @@ const addContact = async (req, res) => {
     });
   }
 };
-
 
 
 const getContacts = async ( req, res ) => {
