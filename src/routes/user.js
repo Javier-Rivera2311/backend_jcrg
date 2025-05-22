@@ -28,7 +28,7 @@ router.route('/updateContact')
     .put(updateContact);
 
 router.route('/addContact')
-    .put(addContact);
+    .post(addContact);
 
 export default router;
 
