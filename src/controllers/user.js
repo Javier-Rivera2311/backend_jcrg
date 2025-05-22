@@ -130,6 +130,35 @@ const updateContact = async (req, res) => {
   }
 };
 
+const deleteContact = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const connection = await createConnection();
+    const [result] = await connection.execute(
+      'DELETE FROM Contacts WHERE id = ?',
+      [id]
+    );
+    await connection.end();
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Contacto no encontrado' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Contacto eliminado correctamente'
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Problemas al eliminar el contacto",
+      code: error
+    });
+  }
+};
+
 
 // Para el registro de usuario
 
@@ -327,5 +356,6 @@ export {
     changePassword,
     getContacts,
     updateContact,
-    addContact
+    addContact,
+    deleteContact
 }
