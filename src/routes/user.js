@@ -30,7 +30,7 @@ router.route('/updateContact/:id')
 router.route('/addContact')
     .post(addContact);
 
-router.route('/deleteContact')
+router.route('/deleteContact/:id')
     .delete(deleteContact);
 
 

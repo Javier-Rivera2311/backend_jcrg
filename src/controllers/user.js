@@ -107,7 +107,7 @@ const updateContact = async (req, res) => {
   try {
     const connection = await createConnection();
     const [result] = await connection.execute(
-      `UPDATE Contacts SET Name = ?, email = ?, Phone = ?, Commune = ?, job = ?, project = ? WHERE id = ?`,
+      `UPDATE Contacts SET Name = ?, email = ?, Phone = ?, Commune = ?, job = ?, project = ? WHERE ID = ?`,
       [name, email, phone, commune, job, project, id]
     );
     await connection.end();
@@ -136,7 +136,7 @@ const deleteContact = async (req, res) => {
   try {
     const connection = await createConnection();
     const [result] = await connection.execute(
-      'DELETE FROM Contacts WHERE id = ?',
+      'DELETE FROM Contacts WHERE ID = ?',
       [id]
     );
     await connection.end();
