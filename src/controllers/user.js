@@ -38,6 +38,41 @@ const getUsuarios = async (req, res) => {
 };
 
 
+const addContact = async (req, res) => {
+  const { name, email, phone, commune, job, project } = req.body;
+
+  if (!name || !email || !phone) {
+    return res.status(400).json({
+      success: false,
+      message: "Faltan campos obligatorios: name, email o phone"
+    });
+  }
+
+  try {
+    const connection = await createConnection();
+    const [result] = await connection.execute(
+      `INSERT INTO Contacts (name, email, phone, commune, job, project) VALUES (?, ?, ?, ?, ?, ?)`,
+      [name, email, phone, commune, job, project]
+    );
+    await connection.end();
+
+    return res.status(201).json({
+      success: true,
+      message: "Usuario insertado correctamente",
+      insertedId: result.insertId
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Problemas al insertar el usuario",
+      code: error
+    });
+  }
+};
+
+
+
 const getContacts = async ( req, res ) => {
   try {
       
@@ -56,6 +91,38 @@ const getContacts = async ( req, res ) => {
           error: "Problemas al traer los usuarios",
           code: error
       });
+  }
+};
+
+// editar contactos
+
+const updateContact = async (req, res) => {
+  const { id } = req.params;
+  const { name, email, phone, commune, job, project } = req.body;
+
+  try {
+    const connection = await createConnection();
+    const [result] = await connection.execute(
+      `UPDATE Contacts SET name = ?, email = ?, phone = ?, commune = ?, job = ?, project = ? WHERE id = ?`,
+      [name, email, phone, commune, job, project, id]
+    );
+    await connection.end();
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Contacto no encontrado' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Contacto actualizado correctamente'
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Problemas al actualizar el contacto",
+      code: error
+    });
   }
 };
 
@@ -255,4 +322,6 @@ export {
     updateUser,
     changePassword,
     getContacts,
+    updateContact,
+    addContact
 }
