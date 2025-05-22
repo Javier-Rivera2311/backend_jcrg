@@ -99,12 +99,15 @@ const getContacts = async ( req, res ) => {
 
 const updateContact = async (req, res) => {
   const { id } = req.params;
-  const { name, email, phone, commune, job, project } = req.body;
+  const { Name, email, Phone, Commune, job, project } = req.body;
+  const name = Name;
+  const phone = Phone;
+  const commune = Commune;
 
   try {
     const connection = await createConnection();
     const [result] = await connection.execute(
-      `UPDATE Contacts SET name = ?, email = ?, phone = ?, commune = ?, job = ?, project = ? WHERE id = ?`,
+      `UPDATE Contacts SET Name = ?, email = ?, Phone = ?, Commune = ?, job = ?, project = ? WHERE id = ?`,
       [name, email, phone, commune, job, project, id]
     );
     await connection.end();
