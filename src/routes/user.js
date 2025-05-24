@@ -2,7 +2,23 @@
 defines two routes: */
 import { Router } from 'express';
 
-import { getUsuarios, setUsuario, changePassword, login,updateUser, getContacts,updateContact,addContact,deleteContact} from '../controllers/user.js';
+import {
+  getUsuarios,
+  setUsuario,
+  changePassword,
+  login,
+  updateUser,
+  getContacts,
+  updateContact,
+  addContact,
+  deleteContact,
+  getTask,
+  addTask,
+  updateTask,
+  getMeet,
+  addMeet,
+  updateMeet
+} from '../controllers/user.js';
 
 const router = Router();
 
@@ -33,6 +49,25 @@ router.route('/addContact')
 router.route('/deleteContact/:id')
     .delete(deleteContact);
 
+    // Task routes
+router.route('/getTasks')
+    .get(getTask);
+
+router.route('/addTask')
+    .post(addTask);
+
+router.route('/updateTask/:id')
+    .put(updateTask);
+
+// Meeting routes
+router.route('/getMeetings')
+    .get(getMeet);
+
+router.route('/addMeeting')
+    .post(addMeet);
+
+router.route('/updateMeeting/:id')
+    .put(updateMeet);
 
 export default router;
 
