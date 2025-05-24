@@ -215,30 +215,30 @@ const setUsuario = async (req, res) => {
 };
 
 
-// para validar el login del usuario
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
 
     const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT * FROM userapp WHERE email = ?', [email]);
+    const [rows] = await connection.execute(
+      'SELECT * FROM workers WHERE mail = ?', 
+      [email]
+    );
     await connection.end();
 
     if (rows.length === 1) {
       const user = rows[0];
-      const passwordMatch = await bcrypt.compare(password, user.password);
 
-      if (passwordMatch) {
-        // Genera un token de autenticación
+      if (password === user.password) {
         const token = jwt.sign({ id: user.ID }, 'secret-key', { expiresIn: '2h' });
 
         return res.status(200).json({
           success: true,
           message: "Inicio de sesión exitoso",
-          token: token,  // Envía el token al cliente
-          name: user.name,  // Envía el nombre del usuario al cliente
-          email: user.email  // Envía el correo electrónico del usuario al cliente
-
+          token: token,
+          name: user.Name,
+          email: user.mail,
+          department_id: user.department_id,
         });
       } else {
         return res.status(401).json({
@@ -260,6 +260,7 @@ const login = async (req, res) => {
     });
   }
 };
+
 
 
 const updateUser = async (req, res) => {
@@ -348,6 +349,15 @@ const changePassword = async (req, res) => {
     });
   }
 };
+
+
+
+
+
+
+
+
+
 export {
     login,
     getUsuarios,
@@ -357,5 +367,11 @@ export {
     getContacts,
     updateContact,
     addContact,
-    deleteContact
+    deleteContact,
+    getTask,
+    addTask,
+    updateTask,
+    getMeet,
+    addMeet,
+    updateMeet,
 }
