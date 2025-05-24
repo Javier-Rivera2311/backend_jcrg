@@ -350,11 +350,159 @@ const changePassword = async (req, res) => {
   }
 };
 
+const getTask = async (req, res) => {
+  try {
+    const connection = await createConnection();
 
+    const [rows] = await connection.execute(`
+      SELECT * FROM Task
+    `);
 
+    await connection.end();
 
+    return res.status(200).json({
+      success: true,
+      tasks: rows
+    });
 
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener las tareas",
+      code: error
+    });
+  }
+};
 
+const addTask = async (req, res) => {
+  try {
+    const { title, departament, state, date_finish, workers } = req.body;
+    const connection = await createConnection();
+
+    await connection.execute(`
+      INSERT INTO Task (title, departament, state, date_finish, workers)
+      VALUES (?, ?, ?, ?, ?)
+    `, [title, departament, state, date_finish, workers]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Tarea añadida correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al añadir la tarea",
+      code: error
+    });
+  }
+};
+
+const updateTask = async (req, res) => {
+  try {
+    const { id, title, departament, state, date_finish, workers } = req.body;
+    const connection = await createConnection();
+
+    await connection.execute(`
+      UPDATE Task
+      SET title = ?, departament = ?, state = ?, date_finish = ?, workers = ?
+      WHERE ID = ?
+    `, [title, departament, state, date_finish, workers, id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Tarea actualizada correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al actualizar la tarea",
+      code: error
+    });
+  }
+};
+
+const getMeet = async (req, res) => {
+  try {
+    const connection = await createConnection();
+
+    const [rows] = await connection.execute(`
+      SELECT * FROM Meetings
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      meetings: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener las reuniones",
+      code: error
+    });
+  }
+};
+
+const addMeet = async (req, res) => {
+  try {
+    const { date, time, type, Title, details } = req.body;
+    const connection = await createConnection();
+
+    await connection.execute(`
+      INSERT INTO Meetings (date, time, type, Title, details)
+      VALUES (?, ?, ?, ?, ?)
+    `, [date, time, type, Title, details]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Reunión añadida correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al añadir la reunión",
+      code: error
+    });
+  }
+};
+
+const updateMeet = async (req, res) => {
+  try {
+    const { id, date, time, type, Title, details } = req.body;
+    const connection = await createConnection();
+
+    await connection.execute(`
+      UPDATE Meetings
+      SET date = ?, time = ?, type = ?, Title = ?, details = ?
+      WHERE ID = ?
+    `, [date, time, type, Title, details, id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Reunión actualizada correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al actualizar la reunión",
+      code: error
+    });
+  }
+};
 
 
 
