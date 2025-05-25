@@ -271,7 +271,7 @@ const login = async (req, res) => {
 
     const connection = await createConnection();
     const [rows] = await connection.execute(
-      'SELECT * FROM workers WHERE mail = ?', 
+      'SELECT * FROM Workers WHERE mail = ?', 
       [email]
     );
     await connection.end();
@@ -279,7 +279,10 @@ const login = async (req, res) => {
     if (rows.length === 1) {
       const user = rows[0];
 
-      if (password === user.password) {
+      // Comparar la contraseña ingresada con el hash almacenado
+      const passwordMatch = await bcrypt.compare(password, user.password);
+
+      if (passwordMatch) {
         const token = jwt.sign({ id: user.ID }, 'secret-key', { expiresIn: '2h' });
 
         return res.status(200).json({
@@ -303,6 +306,7 @@ const login = async (req, res) => {
       });
     }
   } catch (error) {
+    console.error('Error en login:', error);
     return res.status(500).json({
       status: false,
       error: "Problemas al iniciar sesión",
