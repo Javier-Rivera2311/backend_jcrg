@@ -161,7 +161,6 @@ const deleteContact = async (req, res) => {
 
 
 // Para el registro de usuario
-
 const setUsuario = async (req, res) => {
   try {
     const {
@@ -170,7 +169,6 @@ const setUsuario = async (req, res) => {
       password,
       confirmPassword,
       department_id,
-      mail_personal // opcional
     } = req.body;
 
     // Validar seguridad de la contraseña
@@ -191,7 +189,7 @@ const setUsuario = async (req, res) => {
 
     const connection = await createConnection();
 
-    // Validar si el correo ya existe
+    // Validar si el correo ya existe (respetando "mail" exacto)
     const [existing] = await connection.execute(
       'SELECT * FROM workers WHERE mail = ?',
       [mail]
@@ -219,16 +217,14 @@ const setUsuario = async (req, res) => {
       });
     }
 
+    // Encriptar la contraseña
     const hashedPassword = await bcrypt.hash(password, 10);
-    
-    const safeMailPersonal = typeof mail_personal === 'string' ? mail_personal : null;
 
-    // Si no se envió mail_personal, se guarda como NULL
+    // Insertar nuevo usuario (sin mail_personal)
     const [insertResult] = await connection.execute(
-      'INSERT INTO workers (Name, mail, password, department_id, mail_personal) VALUES (?, ?, ?, ?, ?)',
-      [name, mail, hashedPassword, department_id, safeMailPersonal]
+      'INSERT INTO workers (Name, mail, password, department_id) VALUES (?, ?, ?, ?)',
+      [name, mail, hashedPassword, department_id]
     );
-
 
     await connection.end();
 
@@ -239,6 +235,7 @@ const setUsuario = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('Error al registrar usuario:', error);
     return res.status(500).json({
       success: false,
       error: 'Problemas al registrar usuario',
