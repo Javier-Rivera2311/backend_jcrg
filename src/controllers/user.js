@@ -220,12 +220,15 @@ const setUsuario = async (req, res) => {
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const safeMailPersonal = typeof mail_personal === 'string' ? mail_personal : null;
 
     // Si no se envió mail_personal, se guarda como NULL
     const [insertResult] = await connection.execute(
       'INSERT INTO workers (Name, mail, password, department_id, mail_personal) VALUES (?, ?, ?, ?, ?)',
-      [name, mail, hashedPassword, department_id, mail_personal || null]
+      [name, mail, hashedPassword, department_id, safeMailPersonal]
     );
+
 
     await connection.end();
 
