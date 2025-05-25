@@ -164,51 +164,101 @@ const deleteContact = async (req, res) => {
 
 const setUsuario = async (req, res) => {
   try {
-    const { name, lastname, email, password, confirmPassword} = req.body;
-  // Validar que la contraseña cumpla con los requisitos
-  const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
-  if (!passwordRegex.test(password)) {
-    return res.status(400).json({
-      success: false,
-      error: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número, un carácter especial y ser de al menos 6 caracteres'
-    });
-  }      
+    const {
+      name,
+      mail,
+      password,
+      confirmPassword,
+      department_id,
+      mail_personal // opcional
+    } = req.body;
 
-  // Verificar que las contraseñas coincidan
-  if (password !== confirmPassword) {
+    // Validar seguridad de la contraseña
+    const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{6,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        success: false,
+        error: 'La contraseña debe tener al menos una mayúscula, una minúscula, un número, un carácter especial y mínimo 6 caracteres.'
+      });
+    }
+
+    if (password !== confirmPassword) {
       return res.status(400).json({
         success: false,
         error: 'Las contraseñas no coinciden'
       });
     }
 
-    // Verificar si el correo electrónico ya existe en la base de datos
     const connection = await createConnection();
-    const [rows] = await connection.execute('SELECT * FROM userapp WHERE email = ?', [email]);
-    if (rows.length > 0) {
+
+    // Validar si el correo ya existe
+    const [existing] = await connection.execute(
+      'SELECT * FROM workers WHERE mail = ?',
+      [mail]
+    );
+
+    if (existing.length > 0) {
       await connection.end();
       return res.status(400).json({
         success: false,
-        error: 'El correo electrónico ya está registrado'
+        error: 'El correo ya está registrado'
       });
     }
 
-    // Cifrar la contraseña antes de almacenarla en la base de datos
+    // Verificar que el departamento exista
+    const [depCheck] = await connection.execute(
+      'SELECT * FROM Department WHERE ID = ?',
+      [department_id]
+    );
+
+    if (depCheck.length === 0) {
+      await connection.end();
+      return res.status(400).json({
+        success: false,
+        error: 'Departamento inválido'
+      });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insertar el nuevo registro en la base de datos
-    const [insertResult] = await connection.execute('INSERT INTO userapp (name, lastname, email, password) VALUES (?, ?, ?, ?)', [name, lastname, email, hashedPassword]);
+    // Si no se envió mail_personal, se guarda como NULL
+    const [insertResult] = await connection.execute(
+      'INSERT INTO workers (Name, mail, password, department_id, mail_personal) VALUES (?, ?, ?, ?, ?)',
+      [name, mail, hashedPassword, department_id, mail_personal || null]
+    );
+
     await connection.end();
 
     return res.status(200).json({
       success: true,
-      usuarios: insertResult
+      message: 'Usuario registrado correctamente',
+      insertId: insertResult.insertId
     });
 
   } catch (error) {
     return res.status(500).json({
-      status: false,
-      error: 'Problemas al ingresar usuarios',
+      success: false,
+      error: 'Problemas al registrar usuario',
+      code: error
+    });
+  }
+};
+
+
+const getDepartmentsForRegister = async (req, res) => {
+  try {
+    const connection = await createConnection();
+    const [departments] = await connection.execute('SELECT ID, name_dep FROM Department');
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      departments
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: 'Error al obtener los departamentos',
       code: error
     });
   }
@@ -522,4 +572,5 @@ export {
     getMeet,
     addMeet,
     updateMeet,
+    getDepartmentsForRegister,
 }

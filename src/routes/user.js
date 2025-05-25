@@ -17,13 +17,15 @@ import {
   updateTask,
   getMeet,
   addMeet,
-  updateMeet
+  updateMeet,
+  getDepartmentsForRegister
 } from '../controllers/user.js';
 
 const router = Router();
 
 router.route('/ingresar')
-    .post(setUsuario);
+    .get(getDepartmentsForRegister)  // ← Devuelve la lista de departamentos
+    .post(setUsuario);               // ← Registra al nuevo usuario
 
 router.route('/mostrar')
     .get(getUsuarios);
