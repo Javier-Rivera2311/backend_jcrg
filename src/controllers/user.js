@@ -191,7 +191,7 @@ const setUsuario = async (req, res) => {
 
     // Validar si el correo ya existe (respetando "mail" exacto)
     const [existing] = await connection.execute(
-      'SELECT * FROM workers WHERE mail = ?',
+      'SELECT * FROM Workers WHERE mail = ?',
       [mail]
     );
 
@@ -222,7 +222,7 @@ const setUsuario = async (req, res) => {
 
     // Insertar nuevo usuario (sin mail_personal)
     const [insertResult] = await connection.execute(
-      'INSERT INTO workers (Name, mail, password, department_id) VALUES (?, ?, ?, ?)',
+      'INSERT INTO Workers (Name, mail, password, department_id) VALUES (?, ?, ?, ?)',
       [name, mail, hashedPassword, department_id]
     );
 
