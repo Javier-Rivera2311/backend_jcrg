@@ -558,18 +558,30 @@ const updateMeet = async (req, res) => {
   }
 };
 
+const jwt = require('jsonwebtoken');
+
 const getDepartamentosUsuarios = async (req, res) => {
   try {
+    // Obtener el token del header
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    if (!token) return res.status(401).json({ success: false, error: 'No token' });
+
+    // Decodificar el token
+    const decoded = jwt.verify(token, 'secret-key');
+    const userId = decoded.id;
+
     const connection = await createConnection();
 
+    // Buscar SOLO los departamentos del usuario autenticado
     const [rows] = await connection.execute(`
       SELECT 
         ID, Name, department_id 
       FROM 
         Workers
       WHERE
-        department_id = 4
-    `);
+        ID = ?
+    `, [userId]);
 
     await connection.end();
 
