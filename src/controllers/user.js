@@ -635,9 +635,12 @@ const getDepartamentosUsuarios = async (req, res) => {
     });
   }
 };
+
 const updateTicketStatusAndPriority = async (req, res) => {
   try {
     const { id, status, priority, resolution_date } = req.body;
+
+    console.log("Valores recibidos:", { id, status, priority, resolution_date });
 
     const connection = await createConnection();
 
@@ -655,10 +658,12 @@ const updateTicketStatusAndPriority = async (req, res) => {
     });
 
   } catch (error) {
+    console.error("Error al ejecutar la consulta:", error);
+
     return res.status(500).json({
       success: false,
       error: "Error al actualizar el ticket",
-      code: error
+      code: error.message // muestra el mensaje real del error
     });
   }
 };
