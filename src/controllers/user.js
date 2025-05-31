@@ -558,7 +558,6 @@ const updateMeet = async (req, res) => {
   }
 };
 
-const jwt = require('jsonwebtoken');
 
 const getDepartamentosUsuarios = async (req, res) => {
   try {
