@@ -76,7 +76,7 @@ router.route('/updateMeeting/:id')
 router.route('/departamentosUsuarios')
     .get(getDepartamentosUsuarios); // ← Devuelve los departamentos de los usuarios
 
-router.route('/tickets/:id')
+router.route('/tickets')
     .get(getTickets); // ← Devuelve la lista de tickets
 
 export default router;
