@@ -635,6 +635,34 @@ const getDepartamentosUsuarios = async (req, res) => {
     });
   }
 };
+const updateTicketStatusAndPriority = async (req, res) => {
+  try {
+    const { id, status, priority } = req.body;
+
+    const connection = await createConnection();
+
+    await connection.execute(`
+      UPDATE Tickets
+      SET status = ?, priority = ?
+      WHERE ID = ?
+    `, [status, priority, id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Ticket actualizado correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al actualizar el ticket",
+      code: error
+    });
+  }
+};
+
 
 export {
     login,
@@ -655,4 +683,5 @@ export {
     getDepartmentsForRegister,
     getDepartamentosUsuarios,
     getTickets,
+    updateTicketStatusAndPriority
 }

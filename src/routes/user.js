@@ -20,7 +20,9 @@ import {
   updateMeet,
   getDepartmentsForRegister,
   getDepartamentosUsuarios,
-  getTickets
+  getTickets,
+  updateTicketStatusAndPriority
+
 } from '../controllers/user.js';
 
 const router = Router();
@@ -78,6 +80,9 @@ router.route('/departamentosUsuarios')
 
 router.route('/tickets')
     .get(getTickets); // ← Devuelve la lista de tickets
+
+router.route('/updateTicket')
+    .put(updateTicketStatusAndPriority);
 
 export default router;
 
