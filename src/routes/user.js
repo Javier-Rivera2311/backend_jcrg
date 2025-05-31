@@ -18,7 +18,8 @@ import {
   getMeet,
   addMeet,
   updateMeet,
-  getDepartmentsForRegister
+  getDepartmentsForRegister,
+  getDepartamentosUsuarios
 } from '../controllers/user.js';
 
 const router = Router();
@@ -71,6 +72,8 @@ router.route('/addMeeting')
 router.route('/updateMeeting/:id')
     .put(updateMeet);
 
+router.route('/departamentosUsuarios')
+    .get(getDepartamentosUsuarios); // ← Devuelve los departamentos de los usuarios
 export default router;
 
 

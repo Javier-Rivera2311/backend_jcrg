@@ -558,7 +558,32 @@ const updateMeet = async (req, res) => {
   }
 };
 
+const getDepartamentosUsuarios = async (req, res) => {
+  try {
+    const connection = await createConnection();
 
+    const [rows] = await connection.execute(`
+      SELECT 
+        ID, Name, department_id 
+      FROM 
+        Workers
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      departamentos: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      error: "Problemas al traer los department_id de los usuarios",
+      code: error
+    });
+  }
+};
 
 export {
     login,
@@ -577,4 +602,5 @@ export {
     addMeet,
     updateMeet,
     getDepartmentsForRegister,
+    getDepartamentosUsuarios,
 }
