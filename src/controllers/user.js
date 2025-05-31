@@ -637,15 +637,15 @@ const getDepartamentosUsuarios = async (req, res) => {
 };
 const updateTicketStatusAndPriority = async (req, res) => {
   try {
-    const { id, status, priority } = req.body;
+    const { id, status, priority, resolution_date } = req.body;
 
     const connection = await createConnection();
 
     await connection.execute(`
       UPDATE Tickets
-      SET status = ?, priority = ?
+      SET status = ?, priority = ?, resolution_date = ?
       WHERE ID = ?
-    `, [status, priority, id]);
+    `, [status, priority, resolution_date, id]);
 
     await connection.end();
 
@@ -662,6 +662,7 @@ const updateTicketStatusAndPriority = async (req, res) => {
     });
   }
 };
+
 
 
 export {
