@@ -558,6 +558,44 @@ const updateMeet = async (req, res) => {
   }
 };
 
+const getTickets = async (req, res) => {
+  try {
+    const connection = await createConnection();
+
+    const [rows] = await connection.execute(`
+      SELECT 
+        T.title,
+        T.description,
+        T.status,
+        T.priority,
+        T.creation_date,
+        T.resolution_date,
+        W.Name AS worker_name,
+        D.name_dep AS department_name
+      FROM 
+        Tickets T
+      JOIN 
+        Workers W ON T.worker_id = W.ID
+      JOIN 
+        Department D ON T.department_id = D.ID
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      data: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener los tickets",
+      code: error
+    });
+  }
+};
+
 
 const getDepartamentosUsuarios = async (req, res) => {
   try {
@@ -616,4 +654,5 @@ export {
     updateMeet,
     getDepartmentsForRegister,
     getDepartamentosUsuarios,
+    getTickets,
 }
