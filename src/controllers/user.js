@@ -567,6 +567,8 @@ const getDepartamentosUsuarios = async (req, res) => {
         ID, Name, department_id 
       FROM 
         Workers
+      WHERE
+        department_id = 4
     `);
 
     await connection.end();
