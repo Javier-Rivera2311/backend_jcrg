@@ -644,7 +644,7 @@ const updateTicket = async (req, res) => {
     const connection = await createConnection();
 
     const [result] = await connection.execute(
-      `UPDATE Tickets SET status = ?, priority = ?, resolution_date = ? WHERE ID = ?`,
+      `UPDATE Tickets SET status = ?, priority = ?, resolution_date = ? WHERE id = ?`,
       [status, priority, resolution_date || null, id]
     );
 
