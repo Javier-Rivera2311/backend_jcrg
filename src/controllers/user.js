@@ -636,34 +636,37 @@ const getDepartamentosUsuarios = async (req, res) => {
   }
 };
 
-const updateTicketStatusAndPriority = async (req, res) => {
+const updateTicket = async (req, res) => {
+  const { id } = req.params;
+  const { status, priority, resolution_date } = req.body;
+
   try {
-    const { id, status, priority, resolution_date } = req.body;
-
-    console.log("Valores recibidos:", { id, status, priority, resolution_date });
-
     const connection = await createConnection();
 
-    await connection.execute(`
-      UPDATE Tickets
-      SET status = ?, priority = ?, resolution_date = ?
-      WHERE ID = ?
-    `, [status, priority, resolution_date, id]);
+    const [result] = await connection.execute(
+      `UPDATE Tickets SET status = ?, priority = ?, resolution_date = ? WHERE ID = ?`,
+      [status, priority, resolution_date || null, id]
+    );
 
     await connection.end();
 
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Ticket no encontrado'
+      });
+    }
+
     return res.status(200).json({
       success: true,
-      message: "Ticket actualizado correctamente"
+      message: 'Ticket actualizado correctamente'
     });
 
   } catch (error) {
-    console.error("Error al ejecutar la consulta:", error);
-
     return res.status(500).json({
       success: false,
-      error: "Error al actualizar el ticket",
-      code: error.message // muestra el mensaje real del error
+      error: 'Error al actualizar el ticket',
+      code: error
     });
   }
 };
@@ -689,5 +692,5 @@ export {
     getDepartmentsForRegister,
     getDepartamentosUsuarios,
     getTickets,
-    updateTicketStatusAndPriority
+    updateTicket
 }

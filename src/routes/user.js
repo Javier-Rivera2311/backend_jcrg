@@ -21,7 +21,7 @@ import {
   getDepartmentsForRegister,
   getDepartamentosUsuarios,
   getTickets,
-  updateTicketStatusAndPriority
+  updateTicket
 
 } from '../controllers/user.js';
 
@@ -81,7 +81,7 @@ router.route('/departamentosUsuarios')
 router.route('/tickets')
     .get(getTickets); // ← Devuelve la lista de tickets
 
-router.route('/updateTicket')
+router.route('/updateTicket/:id')
     .put(updateTicketStatusAndPriority);
 
 export default router;
