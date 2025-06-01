@@ -571,6 +571,7 @@ const getTickets = async (req, res) => {
         T.priority,
         T.creation_date,
         T.resolution_date,
+        T.support_response,
         W.Name AS worker_name,
         D.name_dep AS department_name
       FROM 
