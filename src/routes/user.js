@@ -82,7 +82,7 @@ router.route('/tickets')
     .get(getTickets); // ← Devuelve la lista de tickets
 
 router.route('/updateTicket/:id')
-    .put(updateTicketStatusAndPriority);
+    .put(updateTicket);
 
 export default router;
 
