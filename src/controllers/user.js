@@ -564,6 +564,7 @@ const getTickets = async (req, res) => {
 
     const [rows] = await connection.execute(`
       SELECT 
+        T.id AS id,
         T.title,
         T.description,
         T.status,
@@ -595,6 +596,7 @@ const getTickets = async (req, res) => {
     });
   }
 };
+
 
 
 const getDepartamentosUsuarios = async (req, res) => {
