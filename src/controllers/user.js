@@ -641,7 +641,7 @@ const getDepartamentosUsuarios = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const { id } = req.params;
-  let { status, priority, resolution_date } = req.body;
+  let { status, priority, resolution_date, support_response } = req.body;
 
   try {
     // Si el ticket se cierra y no hay fecha de resolución, usar la actual
@@ -661,9 +661,9 @@ const updateTicket = async (req, res) => {
 
     const [result] = await connection.execute(
       `UPDATE Tickets 
-       SET status = ?, priority = ?, resolution_date = ? 
+       SET status = ?, priority = ?, resolution_date = ? , support_response = ?
        WHERE id = ?`,
-      [status, priority, resolution_date || null, id]
+      [status, priority, resolution_date || null, support_response || null, id]
     );
 
     await connection.end();
