@@ -638,13 +638,28 @@ const getDepartamentosUsuarios = async (req, res) => {
 
 const updateTicket = async (req, res) => {
   const { id } = req.params;
-  const { status, priority, resolution_date } = req.body;
+  let { status, priority, resolution_date } = req.body;
 
   try {
+    // Si el ticket se cierra y no hay fecha de resolución, usar la actual
+    if (status === 'Cerrado' && (!resolution_date || resolution_date === '')) {
+      const now = new Date();
+      resolution_date = now.toISOString().slice(0, 19).replace('T', ' ');
+    }
+
+    console.log("Datos a actualizar:", {
+      id,
+      status,
+      priority,
+      resolution_date,
+    });
+
     const connection = await createConnection();
 
     const [result] = await connection.execute(
-      `UPDATE Tickets SET status = ?, priority = ?, resolution_date = ? WHERE id = ?`,
+      `UPDATE Tickets 
+       SET status = ?, priority = ?, resolution_date = ? 
+       WHERE id = ?`,
       [status, priority, resolution_date || null, id]
     );
 
@@ -663,6 +678,7 @@ const updateTicket = async (req, res) => {
     });
 
   } catch (error) {
+    console.error('Error al actualizar ticket:', error);
     return res.status(500).json({
       success: false,
       error: 'Error al actualizar el ticket',
@@ -670,6 +686,7 @@ const updateTicket = async (req, res) => {
     });
   }
 };
+
 
 
 
