@@ -690,6 +690,47 @@ const updateTicket = async (req, res) => {
   }
 };
 
+const createTicket = async (req, res) => {
+  try {
+    const { title, description, priority } = req.body;
+    const worker_id = req.user.id;
+
+    const connection = await createConnection();
+
+    // Obtener el departamento del trabajador
+    const [userRow] = await connection.execute(
+      'SELECT department_id FROM Workers WHERE ID = ?',
+      [worker_id]
+    );
+
+    if (userRow.length === 0) {
+      await connection.end();
+      return res.status(404).json({ success: false, message: 'Usuario no encontrado' });
+    }
+
+    const department_id = userRow[0].department_id;
+
+    await connection.execute(`
+      INSERT INTO Tickets (title, description, status, priority, creation_date, worker_id, department_id)
+      VALUES (?, ?, 'Abierto', ?, NOW(), ?, ?)
+    `, [title, description, priority, worker_id, department_id]);
+
+    await connection.end();
+
+    return res.status(201).json({
+      success: true,
+      message: "Ticket creado correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al crear el ticket",
+      code: error
+    });
+  }
+};
+
 
 
 
@@ -712,5 +753,6 @@ export {
     getDepartmentsForRegister,
     getDepartamentosUsuarios,
     getTickets,
-    updateTicket
+    updateTicket,
+    createTicket,
 }

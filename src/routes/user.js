@@ -1,7 +1,7 @@
 /* The code is creating a router object using the `Router` class from the `express` module. It then
 defines two routes: */
 import { Router } from 'express';
-
+import { verifyToken } from '../middleware/auth.js';
 import {
   getUsuarios,
   setUsuario,
@@ -83,6 +83,9 @@ router.route('/tickets')
 
 router.route('/updateTicket/:id')
     .put(updateTicket);
+
+router.route('/createTicket')
+  .post(verifyToken, createTicket);
 
 export default router;
 
