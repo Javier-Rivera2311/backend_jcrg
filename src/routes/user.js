@@ -21,7 +21,9 @@ import {
   getDepartmentsForRegister,
   getDepartamentosUsuarios,
   getTickets,
-  updateTicket
+  updateTicket,
+  getMyTickets,
+  createTicket
 
 } from '../controllers/user.js';
 
@@ -86,6 +88,10 @@ router.route('/updateTicket/:id')
 
 router.route('/createTicket')
   .post(verifyToken, createTicket);
+
+router.route('/myTickets')
+  .get(verifyToken, getMyTickets);
+
 
 export default router;
 

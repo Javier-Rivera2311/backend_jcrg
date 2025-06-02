@@ -731,6 +731,51 @@ const createTicket = async (req, res) => {
   }
 };
 
+const getMyTickets = async (req, res) => {
+  try {
+    const worker_id = req.user.id;
+
+    const connection = await createConnection();
+
+    const [rows] = await connection.execute(`
+      SELECT 
+        T.id AS id,
+        T.title,
+        T.description,
+        T.status,
+        T.priority,
+        T.creation_date,
+        T.resolution_date,
+        T.support_response,
+        W.Name AS worker_name,
+        D.name_dep AS department_name
+      FROM 
+        Tickets T
+      JOIN 
+        Workers W ON T.worker_id = W.ID
+      JOIN 
+        Department D ON T.department_id = D.ID
+      WHERE 
+        T.worker_id = ?
+      ORDER BY 
+        T.creation_date DESC
+    `, [worker_id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      tickets: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener los tickets del usuario",
+      code: error
+    });
+  }
+};
 
 
 
@@ -755,4 +800,5 @@ export {
     getTickets,
     updateTicket,
     createTicket,
+    getMyTickets
 }
