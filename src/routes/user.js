@@ -1,7 +1,7 @@
 /* The code is creating a router object using the `Router` class from the `express` module. It then
 defines two routes: */
 import { Router } from 'express';
-import { verifyToken } from '../middleware/auth.js';
+const { verifyToken } = require('../middleware/auth');
 import {
   getUsuarios,
   setUsuario,

@@ -15,4 +15,4 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-export { verifyToken };
+module.exports = { verifyToken };
