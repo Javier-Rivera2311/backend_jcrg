@@ -455,7 +455,7 @@ const addTask = async (req, res) => {
 
     // Buscar el ID de la categoría por su nombre
     const [categoryResult] = await connection.execute(
-      `SELECT id FROM categories WHERE name = ?`,
+      `SELECT id FROM Category WHERE name = ?`,
       [category_name]
     );
 
@@ -471,7 +471,7 @@ const addTask = async (req, res) => {
 
     // Insertar tarea con ID obtenido
     await connection.execute(
-      `INSERT INTO task (title, state, date_finish, workers, category_id)
+      `INSERT INTO Task (title, state, date_finish, workers, category_id)
        VALUES (?, 'pendiente', ?, ?, ?)`,
       [title, date_finish, workers, category_id]
     );
