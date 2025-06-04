@@ -409,7 +409,17 @@ const getTask = async (req, res) => {
     const connection = await createConnection();
 
     const [rows] = await connection.execute(`
-      SELECT * FROM Task
+      SELECT 
+        t.ID,
+        t.title,
+        t.state,
+        t.date_finish,
+        t.workers,
+        c.name AS category
+      FROM 
+        task t
+      JOIN 
+        categories c ON t.category_id = c.id;
     `);
 
     await connection.end();
@@ -428,31 +438,35 @@ const getTask = async (req, res) => {
   }
 };
 
+
 const addTask = async (req, res) => {
   try {
-    const { title, departament, state, date_finish, workers } = req.body;
+    const { title, date_finish, workers, category_id } = req.body;
+
     const connection = await createConnection();
 
-    await connection.execute(`
-      INSERT INTO Task (title, departament, state, date_finish, workers)
-      VALUES (?, ?, ?, ?, ?)
-    `, [title, departament, state, date_finish, workers]);
+    const [result] = await connection.execute(`
+      INSERT INTO task (title, state, date_finish, workers, category_id)
+      VALUES (?, 'pendiente', ?, ?, ?)
+    `, [title, date_finish, workers, category_id]);
 
     await connection.end();
 
-    return res.status(200).json({
+    return res.status(201).json({
       success: true,
-      message: "Tarea añadida correctamente"
+      message: "Tarea creada correctamente",
+      taskId: result.insertId
     });
 
   } catch (error) {
     return res.status(500).json({
       success: false,
-      error: "Error al añadir la tarea",
+      error: "Error al crear la tarea",
       code: error
     });
   }
 };
+
 
 const updateTask = async (req, res) => {
   try {
@@ -777,7 +791,53 @@ const getMyTickets = async (req, res) => {
   }
 };
 
+const getListWorker = async (req, res) => {
+  try {
+    const connection = await createConnection();
 
+    const [rows] = await connection.execute(`
+      SELECT * FROM Workers_task
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      meetings: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener los trabajadores de la oficina",
+      code: error
+    });
+  }
+};
+
+const getCategory = async (req, res) => {
+  try {
+    const connection = await createConnection();
+
+    const [rows] = await connection.execute(`
+      SELECT * FROM Category
+    `);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      meetings: rows
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al obtener las categorias",
+      code: error
+    });
+  }
+};
 
 export {
     login,
@@ -800,5 +860,7 @@ export {
     getTickets,
     updateTicket,
     createTicket,
-    getMyTickets
+    getMyTickets,
+    getListWorker,
+    getCategory
 }

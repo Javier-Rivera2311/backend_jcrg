@@ -23,7 +23,9 @@ import {
   getTickets,
   updateTicket,
   getMyTickets,
-  createTicket
+  createTicket,
+  getListWorker,
+  getCategory
 
 } from '../controllers/user.js';
 
@@ -92,6 +94,12 @@ router.route('/createTicket')
 router.route('/myTickets')
   .get(verifyToken, getMyTickets);
 
+router.route('/listWorker')
+    .get(getListWorker);
+
+
+router.route('/Category')
+    .get(getCategory);
 
 export default router;
 
