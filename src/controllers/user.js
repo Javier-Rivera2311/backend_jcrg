@@ -441,28 +441,54 @@ const getTask = async (req, res) => {
 
 const addTask = async (req, res) => {
   try {
-    const { title, date_finish, workers, category_id } = req.body;
+    const { title, date_finish, workers, category_name } = req.body;
+
+    if (!title || !date_finish || !workers || !category_name) {
+      return res.status(400).json({
+        success: false,
+        error: "Faltan campos",
+        body: { title, date_finish, workers, category_name }
+      });
+    }
 
     const connection = await createConnection();
 
-    const [result] = await connection.execute(`
-      INSERT INTO task (title, state, date_finish, workers, category_id)
-      VALUES (?, 'pendiente', ?, ?, ?)
-    `, [title, date_finish, workers, category_id]);
+    // Buscar el ID de la categoría por su nombre
+    const [categoryResult] = await connection.execute(
+      `SELECT id FROM categories WHERE name = ?`,
+      [category_name]
+    );
+
+    if (categoryResult.length === 0) {
+      await connection.end();
+      return res.status(400).json({
+        success: false,
+        error: `La categoría '${category_name}' no existe`
+      });
+    }
+
+    const category_id = categoryResult[0].id;
+
+    // Insertar tarea con ID obtenido
+    await connection.execute(
+      `INSERT INTO task (title, state, date_finish, workers, category_id)
+       VALUES (?, 'pendiente', ?, ?, ?)`,
+      [title, date_finish, workers, category_id]
+    );
 
     await connection.end();
 
     return res.status(201).json({
       success: true,
-      message: "Tarea creada correctamente",
-      taskId: result.insertId
+      message: "Tarea creada exitosamente"
     });
 
   } catch (error) {
+    console.error("ERROR:", error);
     return res.status(500).json({
       success: false,
-      error: "Error al crear la tarea",
-      code: error
+      error: "Error interno al crear la tarea",
+      code: error.message
     });
   }
 };
