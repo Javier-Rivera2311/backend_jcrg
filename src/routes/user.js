@@ -25,7 +25,9 @@ import {
   getMyTickets,
   createTicket,
   getListWorker,
-  getCategory
+  getCategory,
+  deleteTask,
+  updateTaskState 
 
 } from '../controllers/user.js';
 
@@ -100,6 +102,16 @@ router.route('/listWorker')
 
 router.route('/Category')
     .get(getCategory);
+
+// Ruta para actualizar solo el estado de una tarea
+router.route('/Task/state')
+  .put(updateTaskState);
+
+// Ruta para eliminar una tarea por ID
+router.route('/Task/:id')
+  .delete(deleteTask);
+
+
 
 export default router;
 

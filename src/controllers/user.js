@@ -415,6 +415,7 @@ const getTask = async (req, res) => {
         t.state,
         t.date_finish,
         t.workers,
+        t.description,
         c.name AS category
       FROM 
         Task t
@@ -439,15 +440,16 @@ const getTask = async (req, res) => {
 };
 
 
+
 const addTask = async (req, res) => {
   try {
-    const { title, date_finish, workers, category_name } = req.body;
+    const { title, date_finish, workers, category_name, description } = req.body;
 
-    if (!title || !date_finish || !workers || !category_name) {
+    if (!title || !date_finish || !workers || !category_name || !description) {
       return res.status(400).json({
         success: false,
         error: "Faltan campos",
-        body: { title, date_finish, workers, category_name }
+        body: { title, date_finish, workers, category_name, description }
       });
     }
 
@@ -469,11 +471,11 @@ const addTask = async (req, res) => {
 
     const category_id = categoryResult[0].id;
 
-    // Insertar tarea con ID obtenido
+    // Insertar tarea con descripción
     await connection.execute(
-      `INSERT INTO Task (title, state, date_finish, workers, category_id)
-       VALUES (?, 'pendiente', ?, ?, ?)`,
-      [title, date_finish, workers, category_id]
+      `INSERT INTO Task (title, state, date_finish, workers, category_id, description)
+       VALUES (?, 'pendiente', ?, ?, ?, ?)`,
+      [title, date_finish, workers, category_id, description]
     );
 
     await connection.end();
@@ -494,16 +496,26 @@ const addTask = async (req, res) => {
 };
 
 
+
 const updateTask = async (req, res) => {
   try {
-    const { id, title, departament, state, date_finish, workers } = req.body;
+    const { id, title, description, state, date_finish, workers } = req.body;
+
+    if (!id || !title || !description || !state || !date_finish || !workers) {
+      return res.status(400).json({
+        success: false,
+        error: "Faltan campos para actualizar la tarea",
+        body: { id, title, description, state, date_finish, workers }
+      });
+    }
+
     const connection = await createConnection();
 
     await connection.execute(`
       UPDATE Task
-      SET title = ?, departament = ?, state = ?, date_finish = ?, workers = ?
+      SET title = ?, description = ?, state = ?, date_finish = ?, workers = ?
       WHERE ID = ?
-    `, [title, departament, state, date_finish, workers, id]);
+    `, [title, description, state, date_finish, workers, id]);
 
     await connection.end();
 
@@ -520,6 +532,78 @@ const updateTask = async (req, res) => {
     });
   }
 };
+
+const updateTaskState = async (req, res) => {
+  try {
+    const { id, state } = req.body;
+
+    if (!id || !state) {
+      return res.status(400).json({
+        success: false,
+        error: "Faltan campos: id y state son obligatorios",
+        body: { id, state }
+      });
+    }
+
+    const connection = await createConnection();
+
+    await connection.execute(`
+      UPDATE Task
+      SET state = ?
+      WHERE ID = ?
+    `, [state, id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Estado de la tarea actualizado correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al actualizar el estado de la tarea",
+      code: error
+    });
+  }
+};
+
+
+const deleteTask = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        error: "El ID de la tarea es obligatorio"
+      });
+    }
+
+    const connection = await createConnection();
+
+    await connection.execute(`
+      DELETE FROM Task
+      WHERE ID = ?
+    `, [id]);
+
+    await connection.end();
+
+    return res.status(200).json({
+      success: true,
+      message: "Tarea eliminada correctamente"
+    });
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: "Error al eliminar la tarea",
+      code: error
+    });
+  }
+};
+
 
 const getMeet = async (req, res) => {
   try {
@@ -888,5 +972,7 @@ export {
     createTicket,
     getMyTickets,
     getListWorker,
-    getCategory
+    getCategory,
+    deleteTask,
+    updateTaskState 
 }
