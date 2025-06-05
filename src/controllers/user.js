@@ -417,7 +417,7 @@ const getTask = async (req, res) => {
         t.workers,
         c.name AS category
       FROM 
-        task t
+        Task t
       JOIN 
         categories c ON t.category_id = c.id;
     `);
