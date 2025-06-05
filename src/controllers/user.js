@@ -419,7 +419,7 @@ const getTask = async (req, res) => {
       FROM 
         Task t
       JOIN 
-        categories c ON t.category_id = c.id;
+        Category c ON t.category_id = c.id;
     `);
 
     await connection.end();
