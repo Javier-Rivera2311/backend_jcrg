@@ -631,13 +631,17 @@ const getMeet = async (req, res) => {
 
 const addMeet = async (req, res) => {
   try {
-    const { date, time, type, Title, details } = req.body;
+    const { date, time, type, Title, details, url, address } = req.body;
     const connection = await createConnection();
 
+    // Verifica el tipo y define valores nulos si no corresponden
+    const finalUrl = type === 'virtual' ? url || null : null;
+    const finalAddress = type === 'presencial' ? address || null : null;
+
     await connection.execute(`
-      INSERT INTO Meetings (date, time, type, Title, details)
-      VALUES (?, ?, ?, ?, ?)
-    `, [date, time, type, Title, details]);
+      INSERT INTO Meetings (date, time, type, title, details, url, address)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `, [date, time, type, Title, details, finalUrl, finalAddress]);
 
     await connection.end();
 
@@ -655,16 +659,21 @@ const addMeet = async (req, res) => {
   }
 };
 
+
 const updateMeet = async (req, res) => {
   try {
-    const { id, date, time, type, Title, details } = req.body;
+    const { id, date, time, type, Title, details, url, address } = req.body;
     const connection = await createConnection();
+
+    // Definir campos según el tipo
+    const finalUrl = type === 'virtual' ? url || null : null;
+    const finalAddress = type === 'presencial' ? address || null : null;
 
     await connection.execute(`
       UPDATE Meetings
-      SET date = ?, time = ?, type = ?, Title = ?, details = ?
+      SET date = ?, time = ?, type = ?, title = ?, details = ?, url = ?, address = ?
       WHERE ID = ?
-    `, [date, time, type, Title, details, id]);
+    `, [date, time, type, Title, details, finalUrl, finalAddress, id]);
 
     await connection.end();
 
