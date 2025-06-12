@@ -692,6 +692,38 @@ const finalAddress = type === 'presencial' ? address || null : null;
   }
 };
 
+const deleteMeet = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const connection = await createConnection();
+
+    const [result] = await connection.execute(
+      `DELETE FROM Meetings WHERE ID = ?`,
+      [id]
+    );
+
+    await connection.end();
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: 'Reunión no encontrada',
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Reunión eliminada correctamente',
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      error: 'Error al eliminar la reunión',
+      code: error,
+    });
+  }
+};
+
 
 const getTickets = async (req, res) => {
   try {
@@ -976,6 +1008,7 @@ export {
     getMeet,
     addMeet,
     updateMeet,
+    deleteMeet,
     getDepartmentsForRegister,
     getDepartamentosUsuarios,
     getTickets,

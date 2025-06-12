@@ -81,6 +81,10 @@ router.route('/addMeeting')
 router.route('/updateMeeting/:id')
     .put(updateMeet);
 
+router.route('/deleteMeeting/:id')
+    .delete(deleteMeet);
+
+
 router.route('/departamentosUsuarios')
     .get(getDepartamentosUsuarios); // ← Devuelve los departamentos de los usuarios
 
