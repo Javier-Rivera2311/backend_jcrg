@@ -634,9 +634,9 @@ const addMeet = async (req, res) => {
     const { date, time, type, Title, details, url, address } = req.body;
     const connection = await createConnection();
 
-    // Verifica el tipo y define valores nulos si no corresponden
-    const finalUrl = type === 'presencial' ? url || null : null;
-    const finalAddress = type === 'virtual' ? address || null : null;
+ const finalUrl = type === 'virtual' ? url || null : null;
+const finalAddress = type === 'presencial' ? address || null : null;
+
 
     await connection.execute(`
       INSERT INTO Meetings (date, time, type, title, details, url, address)
@@ -666,8 +666,9 @@ const updateMeet = async (req, res) => {
     const { id } = req.params;
     const connection = await createConnection();
 
-    const finalUrl = type === 'virtual' ? url || null : null;
-    const finalAddress = type === 'presencial' ? address || null : null;
+const finalUrl = type === 'virtual' ? url || null : null;
+const finalAddress = type === 'presencial' ? address || null : null;
+
 
     await connection.execute(`
       UPDATE Meetings
