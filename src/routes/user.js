@@ -18,6 +18,7 @@ import {
   getMeet,
   addMeet,
   updateMeet,
+  deleteMeet,
   getDepartmentsForRegister,
   getDepartamentosUsuarios,
   getTickets,
