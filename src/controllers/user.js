@@ -662,10 +662,10 @@ const addMeet = async (req, res) => {
 
 const updateMeet = async (req, res) => {
   try {
-    const { id, date, time, type, Title, details, url, address } = req.body;
+    const { date, time, type, Title, details, url, address } = req.body;
+    const { id } = req.params;
     const connection = await createConnection();
 
-    // Definir campos según el tipo
     const finalUrl = type === 'virtual' ? url || null : null;
     const finalAddress = type === 'presencial' ? address || null : null;
 
@@ -690,6 +690,7 @@ const updateMeet = async (req, res) => {
     });
   }
 };
+
 
 const getTickets = async (req, res) => {
   try {
